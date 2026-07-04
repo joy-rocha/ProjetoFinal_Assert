@@ -1,45 +1,50 @@
+/******************************************************************************/
 /**
- * @file    [NOME_DO_MODULO].h
- * @brief   [Escreva aqui a responsabilidade do módulo, ex: Abstração de hardware]
- * @author  [Seu Nome]
- * @date    [Data de Hoje]
- */
+ * @file Bsp.h
+ * @addtogroup Bsp
+ * @{
+ ******************************************************************************/
 
-#ifndef INC_BSP_H_
-#define INC_BSP_H_
-#endif /* INC_BSP_H_ */
+#ifndef BSP_H
+#define BSP_H
 
-/* ============================================================================== */
-/* Includes                                                                       */
-/* ============================================================================== */
-#include <stdint.h>
-#include <stdbool.h>
-/* Inclua aqui outros .h necessários, como main.h se precisar de tipos básicos */
+/*******************************************************************************
+ * INCLUDES NECESSARIOS
+ ******************************************************************************/
+#include "AssertTypes.h"
+#include "stm32f4xx_hal.h"
 
-/* ============================================================================== */
-/* Defines Locais                                                                 */
-/* ============================================================================== */
+/*******************************************************************************
+ * CONFIGURACOES
+ ******************************************************************************/
 
+/*******************************************************************************
+ * DEFINES PUBLICOS
+ ******************************************************************************/
+#define dBSP_LED_CHANNEL_1                                                     1
+#define dBSP_LED_CHANNEL_2                                                     2
+#define dBSP_LED_CHANNEL_3                                                     3
 
-/* ============================================================================== */
-/* Constantes                                                                     */
-/* ============================================================================== */
-sadwa
-jhhoho
-/* ============================================================================== */
-/* Estruturas de Dados Locais                                                     */
-/* ============================================================================== */
+/*******************************************************************************
+ * TIPOS DE DADOS PUBLICOS
+ ******************************************************************************/
 
+/*******************************************************************************
+ * PROTOTIPOS PUBLICOS
+ ******************************************************************************/
+void Bsp_Init(void);
+bool Bsp_GetSamplingFlag(void);
+void Bsp_ClearSamplingFlag(void);
+u16 Bsp_AdcRead(void);
+void Bsp_PwmSetDuty(u8 channel, u8 duty);
+bool Bsp_GetButtonExtiFlag(void);
+void Bsp_ClearButtonExtiFlag(void);
+void Bsp_StartDebounceTimer(void);
+bool Bsp_GetDebounceTimeoutFlag(void);
+void Bsp_ClearDebounceTimeoutFlag(void);
+bool Bsp_UartRxHasData(void);
+u8 Bsp_UartRxReadByte(void);
 
-/* ============================================================================== */
-/* Protótipos Locais / Funções Públicas                                           */
-/* ============================================================================== */
+#endif /* BSP_H */
 
-/**
- * @brief  Exemplo de inicialização do módulo.
- * @param  Nenhum.
- * @retval Nenhum.
- */
-void [NomeDoModulo]_Init(void);
-
-#endif /* INC_[NOME_DO_MODULO_EM_MAIUSCULO]_H_ */
+/** @} */
