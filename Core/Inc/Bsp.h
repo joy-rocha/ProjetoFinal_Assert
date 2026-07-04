@@ -12,7 +12,7 @@
  * INCLUDES NECESSARIOS
  ******************************************************************************/
 #include "AssertTypes.h"
-#include "stm32f4xx_hal.h"
+#include "main.h" /* Inclui as definicoes geradas pelo STM32CubeMX */
 
 /*******************************************************************************
  * CONFIGURACOES

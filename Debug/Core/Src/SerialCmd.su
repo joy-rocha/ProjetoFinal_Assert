@@ -1,0 +1,4 @@
+../Core/Src/SerialCmd.c:58:6:SerialCmd_Init	8	static
+../Core/Src/SerialCmd.c:71:6:SerialCmd_ProcessRx	16	static
+../Core/Src/SerialCmd.c:109:6:SerialCmd_PrintStatus	40	static
+../Core/Src/SerialCmd.c:141:13:SerialCmd_ParseCommand	8	static

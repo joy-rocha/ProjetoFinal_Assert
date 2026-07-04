@@ -1,0 +1,5 @@
+../Core/Src/LedPwm.c:53:6:LedPwm_Init	8	static
+../Core/Src/LedPwm.c:70:6:LedPwm_SetSelectedLed	16	static
+../Core/Src/LedPwm.c:83:4:LedPwm_GetSelectedLed	4	static
+../Core/Src/LedPwm.c:95:6:LedPwm_Update	16	static
+../Core/Src/LedPwm.c:134:4:LedPwm_GetDuty	24	static

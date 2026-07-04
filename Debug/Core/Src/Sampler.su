@@ -1,0 +1,3 @@
+../Core/Src/Sampler.c:55:6:Sampler_Init	4	static
+../Core/Src/Sampler.c:68:6:Sampler_Update	16	static
+../Core/Src/Sampler.c:99:4:Sampler_GetFilteredPercentage	4	static
