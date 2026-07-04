@@ -1,65 +1,108 @@
+/******************************************************************************/
 /**
- * @file    [NOME_DO_MODULO].c
- * @brief   Implementação do módulo [Nome do Módulo].
- * @author  [Seu Nome]
- * @date    [Data de Hoje]
- */
+ * @file Sampler.c
+ * @brief Modulo responsavel pela aquisicao, filtragem e conversao dos dados.
+ * @addtogroup Sampler
+ * @{
+ ******************************************************************************/
 
-/* ============================================================================== */
-/* Includes                                                                       */
-/* ============================================================================== */
-#include "[NOME_DO_MODULO].h"
+/*******************************************************************************
+ * INCLUDES
+ ******************************************************************************/
+#include "Sampler.h"
+#include "Bsp.h"
 
-/* ============================================================================== */
-/* Defines Locais                                                                 */
-/* ============================================================================== */
+/*******************************************************************************
+ * DEFINES LOCAIS
+ ******************************************************************************/
+/// Quantidade de amostras para o calculo da media movel
+#define dSAMPLER_MAX_SAMPLES                                                   100
 
+/// Valor maximo do conversor AD de 12 bits
+#define dSAMPLER_ADC_MAX_VALUE                                                 4095
 
-/* ============================================================================== */
-/* Constantes                                                                     */
-/* ============================================================================== */
+/// Valor maximo em porcentagem
+#define dSAMPLER_MAX_PERCENTAGE                                                100
 
+/*******************************************************************************
+ * CONSTANTES
+ ******************************************************************************/
 
-/* ============================================================================== */
-/* Estruturas de Dados Locais                                                     */
-/* ============================================================================== */
+/*******************************************************************************
+ * ESTRUTURAS DE DADOS LOCAIS
+ ******************************************************************************/
+/// Estrutura local de controle do amostrador
+static struct
+{
+    u32 accumulator;
+    u16 sampleCount;
+    u8 currentPercentage;
+} sampler;
 
+/*******************************************************************************
+ * PROTOTIPOS LOCAIS
+ ******************************************************************************/
 
-/* ============================================================================== */
-/* Protótipos Locais                                                              */
-/* ============================================================================== */
+/*******************************************************************************
+ * FUNCOES PUBLICAS
+ ******************************************************************************/
 
-/**
- * @brief  [Exemplo] Função auxiliar local (privada).
- * @param  param1: Descrição do parâmetro.
- * @retval Descrição do retorno.
- */
-static void [NomeDoModulo]_FuncaoLocal(uint8_t param1);
-
-/* ============================================================================== */
-/* Funções Públicas                                                               */
-/* ============================================================================== */
-
-/**
- * @brief  Inicializa os recursos do módulo [Nome do Módulo].
- * @param  Nenhum.
+/******************************************************************************/
+/** @brief Inicializa as variaveis do modulo de amostragem.
+ * @param Nenhum.
  * @retval Nenhum.
- */
-void [NomeDoModulo]_Init(void)
+ ******************************************************************************/
+void Sampler_Init(void)
 {
-    /* Implementação da inicialização */
+    sampler.accumulator = 0;
+    sampler.sampleCount = 0;
+    sampler.currentPercentage = 0;
 }
 
-/* ============================================================================== */
-/* Funções Locais                                                                 */
-/* ============================================================================== */
-
-/**
- * @brief  [Exemplo] Função auxiliar local (privada).
- * @param  param1: Descrição do parâmetro.
- * @retval Descrição do retorno.
- */
-static void [NomeDoModulo]_FuncaoLocal(uint8_t param1)
+/******************************************************************************/
+/** @brief Executa a rotina de verificacao e aquisicao de amostras.
+ * Deve ser chamada de forma continua no laco principal (while 1).
+ * @param Nenhum.
+ * @retval Nenhum.
+ ******************************************************************************/
+void Sampler_Update(void)
 {
-    /* Implementação da função local */
+    u32 average = 0;
+
+    if(Bsp_GetSamplingFlag() == true)
+    {
+        Bsp_ClearSamplingFlag();
+
+        sampler.accumulator += (u32)Bsp_AdcRead();
+        sampler.sampleCount++;
+
+        if(sampler.sampleCount >= dSAMPLER_MAX_SAMPLES)
+        {
+            /* Calcula a media das amostras acumuladas */
+            average = sampler.accumulator / dSAMPLER_MAX_SAMPLES;
+
+            /* Converte o valor da media (0 a 4095) para porcentagem (0 a 100) */
+            sampler.currentPercentage = (u8)((average * dSAMPLER_MAX_PERCENTAGE) / dSAMPLER_ADC_MAX_VALUE);
+
+            /* Reinicia os contadores para o proximo ciclo de amostragem */
+            sampler.accumulator = 0;
+            sampler.sampleCount = 0;
+        }
+    }
 }
+
+/******************************************************************************/
+/** @brief Retorna o valor filtrado mais recente na escala de porcentagem.
+ * @param Nenhum.
+ * @retval Valor de 0 a 100 representando a leitura do ADC.
+ ******************************************************************************/
+u8 Sampler_GetFilteredPercentage(void)
+{
+    return sampler.currentPercentage;
+}
+
+/*******************************************************************************
+ * FUNCOES LOCAIS
+ ******************************************************************************/
+
+/** @} */
