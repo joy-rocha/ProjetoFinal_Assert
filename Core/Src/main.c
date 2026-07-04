@@ -41,8 +41,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-/// Periodo de atualizacao do terminal em milissegundos (1 segundo)
-#define dMAIN_PRINT_PERIOD_MS                                                  1000
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -76,8 +75,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  /* Variavel para controle do tempo de impressao no terminal */
-  u32 lastPrintTime = 0;
+
   /* USER CODE END 1 */
 
   /* MPU Configuration--------------------------------------------------------*/
@@ -121,8 +119,8 @@ int main(void)
     /* 1. 🔘 Atualiza a maquina de estados do botao e debouncing */
     Button_Update();
 
-    /* 2. 🎛️ Executa a amostragem e filtragem do ADC se o TIM6 estourar */
-    Sampler_Update();
+    /* 2. 🎛️ Executa a amostragem. A variavel isNewAverageReady sera true quando 100 amostras forem coletadas */
+    bool isNewAverageReady = Sampler_Update();
 
     /* 3. ⌨️ Processa comandos da USART3 via polling (nao bloqueante) */
     if (Bsp_UartRxHasData() == true)
@@ -146,11 +144,9 @@ int main(void)
     /* 4. 💡 Atualiza os ciclos de trabalho (PWM) com base na leitura filtrada */
     LedPwm_Update(Sampler_GetFilteredPercentage(), Button_IsSystemActive());
 
-    /* 5. 💻 Transmissao periodica de status para o terminal (sem usar HAL_Delay) */
-    if ((HAL_GetTick() - lastPrintTime) >= dMAIN_PRINT_PERIOD_MS)
+    /* 5. 💻 Transmissao no terminal sincronizada com o calculo da nova media */
+    if (isNewAverageReady == true)
     {
-        lastPrintTime = HAL_GetTick();
-
         printf("[LED 1] %d%%  |  [LED 2] %d%%  |  [LED 3] %d%%  |  SISTEMA: %s\r\n",
                LedPwm_GetDuty(dLEDPWM_CHANNEL_1),
                LedPwm_GetDuty(dLEDPWM_CHANNEL_2),

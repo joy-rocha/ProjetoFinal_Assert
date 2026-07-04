@@ -29,7 +29,7 @@
  * PROTOTIPOS PUBLICOS
  ******************************************************************************/
 void Sampler_Init(void);
-void Sampler_Update(void);
+bool Sampler_Update(void);
 u8 Sampler_GetFilteredPercentage(void);
 
 #endif /* SAMPLER_H */

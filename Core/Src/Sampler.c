@@ -65,9 +65,10 @@ void Sampler_Init(void)
  * @param Nenhum.
  * @retval Nenhum.
  ******************************************************************************/
-void Sampler_Update(void)
+bool Sampler_Update(void)
 {
     u32 average = 0;
+    bool newAverageReady = false; /* Criamos a flag local */
 
     if(Bsp_GetSamplingFlag() == true)
     {
@@ -78,17 +79,17 @@ void Sampler_Update(void)
 
         if(sampler.sampleCount >= dSAMPLER_MAX_SAMPLES)
         {
-            /* Calcula a media das amostras acumuladas */
             average = sampler.accumulator / dSAMPLER_MAX_SAMPLES;
-
-            /* Converte o valor da media (0 a 4095) para porcentagem (0 a 100) */
             sampler.currentPercentage = (u8)((average * dSAMPLER_MAX_PERCENTAGE) / dSAMPLER_ADC_MAX_VALUE);
 
-            /* Reinicia os contadores para o proximo ciclo de amostragem */
             sampler.accumulator = 0;
             sampler.sampleCount = 0;
+
+            newAverageReady = true; /* Avisa que a media esta pronta! */
         }
     }
+
+    return newAverageReady; /* Retorna a flag para a main */
 }
 
 /******************************************************************************/
